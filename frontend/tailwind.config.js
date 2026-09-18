@@ -8,11 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#030712",
-        cardBg: "rgba(17, 24, 39, 0.7)",
-        cardBorder: "rgba(255, 255, 255, 0.08)",
-        electricCyan: "#06B6D4",
-        neonViolet: "#8B5CF6",
+        background: "#f8fafc",
+        cardBg: "rgba(255, 255, 255, 0.92)",
+        cardBorder: "#e2e8f0",
+        electricCyan: "#0284c7",
+        neonViolet: "#7c3aed",
       },
       animation: {
         'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',

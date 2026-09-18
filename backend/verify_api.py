@@ -1,12 +1,15 @@
 import sys
 import os
+import sqlite3
+import json
+import numpy as np
+import cv2
 
 # Set Python path to include current dir
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 import database
 import analyzer
-import sqlite3
 
 def run_tests():
     print("=== IC Verify AI Verification Script ===")
@@ -28,6 +31,16 @@ def run_tests():
             else:
                 raise Exception(f"Table '{table}' missing from database schema.")
         
+        # Verify damage columns exist
+        cursor.execute("PRAGMA table_info(inspections)")
+        col_names = [r[1] for r in cursor.fetchall()]
+        damage_cols = ["damage_detected", "damage_score", "damage_count", "damage_severity", "damage_details", "damage_image_url", "physical_integrity"]
+        for dc in damage_cols:
+            if dc in col_names:
+                print(f"  - Column '{dc}' verified in inspections.")
+            else:
+                raise Exception(f"Column '{dc}' missing in inspections.")
+                
         # Count seeded items
         cursor.execute("SELECT COUNT(*) FROM reference_db")
         ref_count = cursor.fetchone()[0]
@@ -39,48 +52,69 @@ def run_tests():
         print(f">> Database Verification Failed: {str(e)}")
         return False
         
-    # 2. Test OpenCV image processing & calculations mock-ups
-    print("\n[Test 2] OpenCV & Analyzer Segment Processing")
+    # 2. Test OpenCV Clean Chip Processing
+    print("\n[Test 2] OpenCV Clean Chip Analysis")
     try:
-        # Create a mock image file to process
-        import numpy as np
-        import cv2
+        clean_img = np.zeros((400, 600, 3), dtype=np.uint8)
+        cv2.rectangle(clean_img, (150, 100), (450, 300), (50, 50, 50), -1)
+        cv2.putText(clean_img, "NE555P", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
         
-        mock_img = np.zeros((400, 600, 3), dtype=np.uint8)
-        # Draw some rectangles to look like an IC body
-        cv2.rectangle(mock_img, (150, 100), (450, 300), (50, 50, 50), -1)
-        # Draw legs
-        for i in range(4):
-            cv2.rectangle(mock_img, (100, 120 + i*40), (150, 140 + i*40), (200, 200, 200), -1)
-            cv2.rectangle(mock_img, (450, 120 + i*40), (500, 140 + i*40), (200, 200, 200), -1)
-        # Draw some text
-        cv2.putText(mock_img, "NE555P", (200, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 255, 255), 2)
+        clean_filename = "test_clean_ne555.jpg"
+        clean_filepath = os.path.join(analyzer.UPLOAD_DIR, clean_filename)
+        cv2.imwrite(clean_filepath, clean_img)
         
-        # Save mock raw image
-        test_filename = "test_chip_raw.jpg"
-        test_filepath = os.path.join(analyzer.UPLOAD_DIR, test_filename)
-        cv2.imwrite(test_filepath, mock_img)
-        print(f"  - Saved mock chip image to {test_filepath}")
+        res_clean = analyzer.process_ic_image(clean_filepath, clean_filename)
+        print(f"  - Clean Part: {res_clean['part_number']}")
+        print(f"  - Damage Detected: {res_clean['damage_detected']}")
+        print(f"  - Physical Integrity: {res_clean['physical_integrity']}%")
+        print(f"  - Final Decision: {res_clean['final_decision']}")
         
-        # Run analyzer
-        result = analyzer.process_ic_image(test_filepath, test_filename)
-        print("  - Processing completed. Keys returned:")
-        for key, val in result.items():
-            if "url" in key:
-                print(f"    * {key}: {val}")
-                
-        # Validate output details
-        print(f"  - Part Number parsed: {result['part_number']}")
-        print(f"  - Decision parsed: {result['final_decision']}")
-        print(f"  - Counterfeit Probability: {result['counterfeit_probability']}%")
-        
-        # Clean up
-        if os.path.exists(test_filepath):
-            os.remove(test_filepath)
-            
-        print(">> OpenCV & Analyzer Verification Passed.")
+        if os.path.exists(clean_filepath):
+            os.remove(clean_filepath)
+        print(">> Clean Chip Verification Passed.")
     except Exception as e:
-        print(f">> OpenCV & Analyzer Verification Failed: {str(e)}")
+        print(f">> Clean Chip Verification Failed: {str(e)}")
+        return False
+        
+    # 3. Test OpenCV Damaged Chip Processing (Cracks & Chipping)
+    print("\n[Test 3] OpenCV Damaged Chip Analysis (Cracks & Chipping)")
+    try:
+        damaged_img = np.zeros((400, 600, 3), dtype=np.uint8)
+        # IC Body
+        cv2.rectangle(damaged_img, (150, 100), (450, 300), (50, 50, 50), -1)
+        # Marking
+        cv2.putText(damaged_img, "STM32F103", (180, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+        # Inject prominent jagged crack across body
+        cv2.line(damaged_img, (200, 120), (320, 260), (0, 0, 0), 4)
+        cv2.line(damaged_img, (260, 190), (360, 220), (0, 0, 0), 3)
+        # Inject chipped corner (notch cutout)
+        cv2.rectangle(damaged_img, (140, 90), (180, 130), (0, 0, 0), -1)
+        
+        damaged_filename = "test_stm32_crack_damaged.jpg"
+        damaged_filepath = os.path.join(analyzer.UPLOAD_DIR, damaged_filename)
+        cv2.imwrite(damaged_filepath, damaged_img)
+        
+        res_damaged = analyzer.process_ic_image(damaged_filepath, damaged_filename)
+        print(f"  - Damaged Part: {res_damaged['part_number']}")
+        print(f"  - Damage Detected: {res_damaged['damage_detected']}")
+        print(f"  - Damage Defect Count: {res_damaged['damage_count']}")
+        print(f"  - Damage Severity: {res_damaged['damage_severity']}")
+        print(f"  - Physical Integrity: {res_damaged['physical_integrity']}%")
+        print(f"  - Final Decision: {res_damaged['final_decision']}")
+        print(f"  - Damage Image URL: {res_damaged['damage_image_url']}")
+        print("  - Detected Defect List:")
+        for d in res_damaged['damages']:
+            print(f"    * [{d['severity']}] {d['type']} (Confidence: {d['confidence']}%) - {d['description']}")
+            
+        assert res_damaged['damage_detected'] is True, "Expected damage_detected to be True"
+        assert res_damaged['damage_count'] > 0, "Expected damage_count > 0"
+        assert res_damaged['physical_integrity'] < 100.0, "Expected physical_integrity < 100"
+        
+        if os.path.exists(damaged_filepath):
+            os.remove(damaged_filepath)
+        print(">> Damaged Chip Verification Passed.")
+    except Exception as e:
+        print(f">> Damaged Chip Verification Failed: {str(e)}")
         return False
         
     print("\n=== All Tests Passed Successfully ===")

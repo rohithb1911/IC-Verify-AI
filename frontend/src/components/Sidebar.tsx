@@ -1,6 +1,9 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { Cpu, History, Database, BarChart3, ShieldAlert, Settings, LogOut, FileText } from 'lucide-react';
+import { 
+  LayoutDashboard, Microscope, History, Database, BarChart3, 
+  Settings, Play, Cpu, LogOut, ShieldAlert
+} from 'lucide-react';
 
 interface SidebarProps {
   currentRole?: string;
@@ -9,16 +12,11 @@ interface SidebarProps {
 
 export default function Sidebar({ currentRole = "operator", onLogout }: SidebarProps) {
   const navigate = useNavigate();
-  const menuItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: <Cpu className="w-5 h-5" /> },
-    { name: 'History', path: '/history', icon: <History className="w-5 h-5" /> },
-    { name: 'Reference Database', path: '/database', icon: <Database className="w-5 h-5" /> },
-    { name: 'Analytics', path: '/analytics', icon: <BarChart3 className="w-5 h-5" /> },
-  ];
 
-  if (currentRole === 'administrator') {
-    menuItems.push({ name: 'Admin Panel', path: '/admin', icon: <ShieldAlert className="w-5 h-5" /> });
-  }
+  const handleStartBatch = () => {
+    navigate('/dashboard');
+    window.dispatchEvent(new CustomEvent('aoi:start-batch'));
+  };
 
   const handleLogoutClick = () => {
     if (onLogout) {
@@ -30,64 +28,185 @@ export default function Sidebar({ currentRole = "operator", onLogout }: SidebarP
   };
 
   return (
-    <aside className="w-64 bg-gray-950/80 border-r border-cardBorder min-h-screen flex flex-col justify-between glass-panel sticky top-0">
-      <div className="p-6">
-        {/* Brand */}
-        <div className="flex items-center gap-3 mb-8 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-electricCyan to-neonViolet flex items-center justify-center neon-glow-cyan">
-            <Cpu className="w-5 h-5 text-background stroke-[2.5]" />
-          </div>
-          <span className="text-md font-bold tracking-wider text-white">
-            IC VERIFY <span className="text-electricCyan">AI</span>
-          </span>
+    <aside className="w-64 bg-white border-r border-slate-200 min-h-screen flex flex-col justify-between sticky top-0 transition-colors z-30 select-none shadow-[1px_0_4px_rgba(0,0,0,0.02)]">
+      <div className="p-5 space-y-5">
+        {/* Brand Header */}
+        <div 
+          onClick={() => navigate('/dashboard')} 
+          className="cursor-pointer pt-1"
+        >
+          <h1 className="text-base font-black tracking-tight text-[#0B4F9C] uppercase font-sans">
+            IC MARKING AOI
+          </h1>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="space-y-1">
-          {menuItems.map((item, index) => (
+        {/* System Online / Ready for Batch status card */}
+        <div className="p-3 rounded-lg bg-slate-50/80 border border-slate-200/90 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-md bg-sky-100 text-[#0B4F9C] flex items-center justify-center shrink-0 border border-sky-200/60">
+            <Cpu className="w-4 h-4 stroke-[2.2]" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5 leading-tight">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              System: Online
+            </div>
+            <div className="text-[11px] text-slate-500 font-medium truncate mt-0.5">
+              Ready for Batch
+            </div>
+          </div>
+        </div>
+
+        {/* START BATCH CTA Button */}
+        <button
+          onClick={handleStartBatch}
+          className="w-full py-2.5 px-3 rounded-md bg-[#0B4F9C] hover:bg-[#093e7a] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-sm transition-all duration-150 cursor-pointer active:scale-[0.98]"
+        >
+          <Play className="w-3.5 h-3.5 fill-white" />
+          <span>START BATCH</span>
+        </button>
+
+        {/* Navigation Items */}
+        <nav className="space-y-1 pt-1">
+          {/* Dashboard */}
+          <NavLink
+            to="/dashboard"
+            end
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#0B4F9C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <LayoutDashboard className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span>Dashboard</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* New Inspection */}
+          <button
+            onClick={() => {
+              navigate('/dashboard');
+              window.dispatchEvent(new CustomEvent('aoi:new-inspection'));
+            }}
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
+          >
+            <Microscope className="w-4 h-4 text-slate-500" />
+            <span>New Inspection</span>
+          </button>
+
+          {/* History */}
+          <NavLink
+            to="/history"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#0B4F9C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <History className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span>History</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Reference Database */}
+          <NavLink
+            to="/database"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#0B4F9C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <Database className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span>Reference Database</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Analytics */}
+          <NavLink
+            to="/analytics"
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                isActive
+                  ? 'bg-[#0B4F9C] text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <BarChart3 className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                <span>Analytics</span>
+              </>
+            )}
+          </NavLink>
+
+          {/* Admin Panel (if admin) */}
+          {currentRole === 'administrator' && (
             <NavLink
-              key={index}
-              to={item.path}
-              className={({ isActive }) => 
-                `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-electricCyan/15 to-neonViolet/15 border-l-2 border-electricCyan text-electricCyan' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-900/50'
+              to="/admin"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3.5 py-2.5 rounded-md text-xs font-semibold transition-all duration-150 ${
+                  isActive
+                    ? 'bg-[#0B4F9C] text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80'
                 }`
               }
             >
               {({ isActive }) => (
                 <>
-                  <div className={`${isActive ? 'text-electricCyan' : 'text-gray-400 group-hover:text-gray-200'} transition-colors`}>
-                    {item.icon}
-                  </div>
-                  <span>{item.name}</span>
+                  <ShieldAlert className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                  <span>Admin Panel</span>
                 </>
               )}
             </NavLink>
-          ))}
+          )}
         </nav>
       </div>
 
-      {/* Profile & Logout */}
-      <div className="p-6 border-t border-cardBorder space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gray-800 border border-cardBorder flex items-center justify-center font-bold text-neonViolet">
-            {currentRole.substring(0, 2).toUpperCase()}
-          </div>
-          <div>
-            <div className="text-sm font-semibold text-gray-200 capitalize">{currentRole}</div>
-            <div className="text-xs text-gray-500">Inspection Node 04</div>
-          </div>
-        </div>
-        
-        <button
-          onClick={handleLogoutClick}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 border border-transparent hover:border-red-500/25"
+      {/* Footer Navigation: Settings & Profile */}
+      <div className="p-4 border-t border-slate-200 space-y-3">
+        <NavLink
+          to="/admin"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
         >
-          <LogOut className="w-4 h-4" />
-          <span>Sign Out</span>
-        </button>
+          <Settings className="w-4 h-4 text-slate-500" />
+          <span>Settings</span>
+        </NavLink>
+
+        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center font-bold text-[10px] text-[#0B4F9C]">
+              JD
+            </div>
+            <div className="truncate">
+              <div className="text-xs font-bold text-slate-800 truncate">J. Doe</div>
+              <div className="text-[10px] text-slate-400 uppercase tracking-wider truncate">Lead Inspector</div>
+            </div>
+          </div>
+          <button
+            onClick={handleLogoutClick}
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors cursor-pointer"
+            title="Sign Out"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </aside>
   );

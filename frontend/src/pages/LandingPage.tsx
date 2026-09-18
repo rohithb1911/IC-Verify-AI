@@ -84,11 +84,12 @@ export default function LandingPage() {
     }
 
     const draw = () => {
-      ctx.fillStyle = 'rgba(3, 7, 18, 0.08)';
+      const isDark = document.documentElement.classList.contains('dark');
+      ctx.fillStyle = isDark ? 'rgba(3, 7, 18, 0.08)' : 'rgba(248, 250, 252, 0.25)';
       ctx.fillRect(0, 0, width, height);
 
       // Draw Grid
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(15, 23, 42, 0.04)';
       ctx.lineWidth = 1;
       const gridSize = 40;
       for (let x = 0; x < width; x += gridSize) {
@@ -178,72 +179,67 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-background overflow-hidden flex flex-col justify-between">
+    <div className="relative min-h-screen bg-background text-slate-800 overflow-hidden flex flex-col justify-between">
       {/* Circuit Background */}
       <canvas ref={canvasRef} className="absolute inset-0 z-0 pointer-events-none opacity-60" />
 
       {/* Header Banner */}
       <header className="relative z-10 w-full px-6 py-6 max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-tr from-electricCyan to-neonViolet flex items-center justify-center neon-glow-cyan">
-            <Cpu className="w-6 h-6 text-background stroke-[2.5]" />
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-md bg-[#0B4F9C] flex items-center justify-center shadow-sm">
+            <Cpu className="w-5 h-5 text-white stroke-[2.5]" />
           </div>
-          <span className="text-xl font-bold tracking-wider bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            IC VERIFY <span className="text-electricCyan">AI</span>
+          <span className="text-base font-black tracking-tight text-[#0B4F9C] uppercase font-sans">
+            IC MARKING AOI
           </span>
         </div>
         <button 
           onClick={() => navigate('/dashboard')}
-          className="px-5 py-2 rounded-lg bg-gray-900 border border-cardBorder text-sm font-medium hover:border-electricCyan/50 hover:text-electricCyan transition-all duration-300 flex items-center gap-2 glass-panel"
+          className="px-4 py-2 rounded-md bg-white border border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-700 hover:border-[#0B4F9C] hover:text-[#0B4F9C] shadow-xs transition-all flex items-center gap-2 cursor-pointer"
         >
-          Enter Dashboard <ArrowRight className="w-4 h-4" />
+          Enter Console <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </header>
 
       {/* Hero Section */}
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-12 flex-grow flex flex-col items-center justify-center text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-electricCyan/10 border border-electricCyan/20 text-xs font-semibold text-electricCyan mb-6 animate-pulse-glow">
-          <ShieldCheck className="w-4 h-4" /> Smart India Hackathon 2026 Solution
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 border border-sky-200 text-xs font-bold text-[#0B4F9C] mb-6 shadow-xs">
+          <ShieldCheck className="w-4 h-4 text-[#0B4F9C]" /> Smart India Hackathon 2026 Solution
         </div>
 
         {/* Title */}
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 max-w-5xl leading-tight">
-          AI Powered Automated <br />
-          <span className="bg-gradient-to-r from-electricCyan via-blue-400 to-neonViolet bg-clip-text text-transparent">
-            Optical Inspection (AOI)
+        <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-5 max-w-4xl leading-tight text-slate-900">
+          Automated Optical Marking Inspection <br />
+          <span className="text-[#0B4F9C]">
+            (AOI Console Node 04)
           </span>
         </h1>
 
         {/* Subtitle */}
-        <h2 className="text-lg md:text-xl text-gray-300 font-medium max-w-3xl mb-4 leading-relaxed">
-          Detect Counterfeit Integrated Circuit Markings using Artificial Intelligence, OCR, and Computer Vision.
+        <h2 className="text-base md:text-lg text-slate-600 font-normal max-w-2xl mb-4 leading-relaxed">
+          High-accuracy computer vision verification against genuine semiconductor databases, detecting counterfeit laser markings and structural package defects.
         </h2>
 
-        {/* Description */}
-        <p className="text-sm md:text-base text-gray-400 max-w-2xl mb-8 leading-relaxed">
-          Upload an IC image and receive a complete authenticity analysis including OCR, logo verification, font comparison, surface inspection, and counterfeit probability.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-16">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-14">
           <button 
             onClick={() => navigate('/dashboard')}
-            className="px-8 py-4 rounded-lg bg-gradient-to-r from-electricCyan to-blue-500 text-background font-semibold hover:opacity-90 hover:scale-[1.02] transition-all duration-300 shadow-lg shadow-electricCyan/20 flex items-center justify-center gap-2"
+            className="px-6 py-3 rounded-md bg-[#0B4F9C] hover:bg-[#093e7a] text-white font-bold text-xs uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
-            Upload IC <Cpu className="w-5 h-5" />
+            Launch Inspection <Cpu className="w-4 h-4" />
           </button>
           
           <button 
             onClick={() => navigate('/dashboard')}
-            className="px-8 py-4 rounded-lg bg-neonViolet/10 border border-neonViolet/30 text-white font-semibold hover:bg-neonViolet/20 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2"
+            className="px-6 py-3 rounded-md bg-white border border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
           >
-            Live Demo <Play className="w-5 h-5 fill-white" />
+            Run Demo Scan <Play className="w-3.5 h-3.5 fill-[#0B4F9C] text-[#0B4F9C]" />
           </button>
 
           <a 
             href="#features"
-            className="px-8 py-4 rounded-lg bg-gray-900/60 border border-cardBorder text-gray-300 font-medium hover:border-gray-700 transition-all duration-300 flex items-center justify-center gap-2 glass-panel"
+            className="px-8 py-4 rounded-xl bg-white dark:bg-gray-900/60 border border-slate-200 dark:border-cardBorder text-slate-700 dark:text-gray-300 font-semibold hover:border-slate-300 shadow-sm transition-all duration-300 flex items-center justify-center gap-2"
           >
             Learn More <ArrowDown className="w-4 h-4" />
           </a>
@@ -254,25 +250,25 @@ export default function LandingPage() {
           {features.map((f, i) => (
             <div 
               key={i} 
-              className="p-6 rounded-xl glass-panel text-left hover:border-electricCyan/30 hover:shadow-lg hover:shadow-cyan-950/20 transition-all duration-300 group"
+              className="p-6 rounded-2xl bg-white dark:bg-gray-900/50 border border-slate-200 dark:border-cardBorder text-left hover:border-sky-400 hover:shadow-lg hover:shadow-sky-500/10 shadow-sm transition-all duration-300 group"
             >
-              <div className="w-12 h-12 rounded-lg bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                 {f.icon}
               </div>
-              <h3 className="text-base font-bold text-gray-200 mb-2">{f.title}</h3>
-              <p className="text-xs text-gray-400 leading-relaxed">{f.desc}</p>
+              <h3 className="text-base font-bold text-slate-800 dark:text-gray-200 mb-2">{f.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-gray-400 leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full px-6 py-6 border-t border-cardBorder max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
+      <footer className="relative z-10 w-full px-6 py-6 border-t border-slate-200 dark:border-cardBorder max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-gray-500">
         <div>© 2026 IC Verify AI. All Rights Reserved.</div>
         <div className="flex gap-4 mt-2 sm:mt-0">
-          <a href="#" className="hover:text-electricCyan transition-colors">Privacy Policy</a>
-          <a href="#" className="hover:text-electricCyan transition-colors">Terms of Service</a>
-          <a href="#" className="hover:text-electricCyan transition-colors">SIH Portal</a>
+          <a href="#" className="hover:text-sky-600 dark:hover:text-electricCyan transition-colors">Privacy Policy</a>
+          <a href="#" className="hover:text-sky-600 dark:hover:text-electricCyan transition-colors">Terms of Service</a>
+          <a href="#" className="hover:text-sky-600 dark:hover:text-electricCyan transition-colors">SIH Portal</a>
         </div>
       </footer>
     </div>
