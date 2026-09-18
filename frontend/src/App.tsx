@@ -175,7 +175,7 @@ export default function App() {
 
           {/* Quick links for evaluation demo */}
           <div className="pt-2 border-t border-slate-200 space-y-3">
-            <div className="text-[10px] text-slate-400 text-center font-bold uppercase tracking-wider">SIH Quick Demo Login</div>
+            <div className="text-[10px] text-slate-400 text-center font-bold uppercase tracking-wider">Quick Demo Credentials</div>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => handlePreFill('admin')}

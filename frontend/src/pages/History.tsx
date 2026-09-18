@@ -106,7 +106,7 @@ export default function History() {
     
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(9);
-    doc.text("Smart India Hackathon 2026 - Automated Optical & Damage Inspection (AOI)", 15, 27);
+    doc.text("Industrial Automated Optical & Damage Inspection (AOI) Suite", 15, 27);
     doc.text(`Inspector: ${item.inspector_name || "AI Inspection Engine Node 04"}`, 15, 33);
 
     doc.setTextColor(100, 116, 139);
@@ -222,7 +222,7 @@ export default function History() {
 
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.text("SIH Nodal Center Officer", 130, 240);
+    doc.text("Chief Quality Assurance Officer", 130, 240);
     doc.line(130, 243, 190, 243);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
