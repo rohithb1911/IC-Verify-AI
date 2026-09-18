@@ -1,10 +1,21 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
+const getBackendOrigin = (): string => {
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '5173') {
+    return 'http://localhost:8000';
+  }
+  return '';
+};
+
+const backendOrigin = getBackendOrigin();
+const API_URL = import.meta.env.VITE_API_URL || (backendOrigin ? `${backendOrigin}/api` : '/api');
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: 15000,
 });
 
 export interface DamageDefect {
@@ -224,7 +235,6 @@ const generateMockScan = (filename: string, fallbackImageUrl?: string): Inspecti
   };
 };
 
-const backendOrigin = 'http://localhost:8000';
 const fixUrl = (url?: string): string => {
   if (url && url.startsWith('/samples/')) {
     return url;

@@ -457,6 +457,36 @@ def log_event(level: str, message: str):
     except Exception:
         pass
 
+from fastapi.responses import FileResponse
+
+# ============================================================================
+# UNIFIED DEPLOYMENT: SERVE BUILT FRONTEND SPA & ASSETS
+# ============================================================================
+FRONTEND_DIST = os.path.join(BASE_DIR, "frontend_dist")
+if not os.path.exists(FRONTEND_DIST):
+    FRONTEND_DIST = os.path.join(BASE_DIR, "..", "frontend", "dist")
+
+if os.path.exists(FRONTEND_DIST):
+    assets_dir = os.path.join(FRONTEND_DIST, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="frontend_assets")
+    samples_dir = os.path.join(FRONTEND_DIST, "samples")
+    if os.path.exists(samples_dir):
+        app.mount("/samples", StaticFiles(directory=samples_dir), name="frontend_samples")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        if full_path.startswith("api") or full_path.startswith("static"):
+            raise HTTPException(status_code=404, detail="Endpoint not found")
+        target_file = os.path.join(FRONTEND_DIST, full_path)
+        if full_path and os.path.exists(target_file) and os.path.isfile(target_file):
+            return FileResponse(target_file)
+        index_file = os.path.join(FRONTEND_DIST, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend build not found")
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)

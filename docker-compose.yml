@@ -1,0 +1,16 @@
+services:
+  ic-verify-ai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ic-verify-ai-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+    volumes:
+      - ic_data:/app/backend/static
+    restart: unless-stopped
+
+volumes:
+  ic_data:

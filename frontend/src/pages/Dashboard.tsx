@@ -279,7 +279,10 @@ export default function Dashboard() {
     try {
       let res = await fetch(`/samples/${filename}`);
       if (!res.ok) {
-        res = await fetch(`http://localhost:8000/static/uploads/${filename}`);
+        const backendBase = (typeof window !== 'undefined' && window.location.hostname === 'localhost' && window.location.port === '5173')
+          ? 'http://localhost:8000'
+          : '';
+        res = await fetch(`${backendBase}/static/uploads/${filename}`);
       }
       if (res.ok) {
         const blob = await res.blob();
