@@ -1,6 +1,8 @@
-# IC Verify AI - Automated Optical marking Inspection (AOI)
+# IC Verify AI - Automated Optical Marking Inspection (AOI)
 
-IC Verify AI is a production-quality inspection platform built for the Smart India Hackathon (SIH). It verifies Integrated Circuit (IC) markings, logo vectors, surface quality, and packaging outlines to detect counterfeits, remarked parts, or surface defects using Computer Vision and OCR algorithms.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rohithb1911/IC-Verify-AI)
+
+IC Verify AI is an industrial-grade automated optical inspection platform. It verifies Integrated Circuit (IC) markings, OEM logo vectors, surface quality, and packaging outlines to detect counterfeits, remarked parts, or structural package defects using Computer Vision and OCR algorithms.
 
 ## Project Structure
 
