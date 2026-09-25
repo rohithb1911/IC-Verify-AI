@@ -1,0 +1,33 @@
+# Dependencies
+node_modules
+frontend/node_modules
+.venv
+venv
+env
+
+# Python Cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Git & Local Build Artifacts
+.git
+.dist
+dist
+frontend/dist
+
+# Java scratch files
+*.java
+*.class
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Static uploads
+backend/static/uploads/*
+!backend/static/uploads/.gitkeep
+backend/static/processed/*
+!backend/static/processed/.gitkeep
