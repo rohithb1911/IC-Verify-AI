@@ -6,7 +6,24 @@ This project is configured for **Unified Production Deployment**, where a single
 
 ## Deployment Options
 
-### Option 1: Render.com (Recommended — 1-Click Free/Low Cost)
+### Option 1: Vercel (1-Click Frontend Deployment)
+Deploy the React Vite SPA on Vercel with automatic SPA routing:
+
+1. Click here to import directly:
+   👉 **[Deploy on Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Frohithb1911%2FIC-Verify-AI)**
+   *(Or go to [vercel.com/new](https://vercel.com/new) and select `rohithb1911/IC-Verify-AI`)*
+2. Configure settings:
+   - **Framework Preset**: Vite
+   - **Root Directory**: `./` (or `frontend`)
+   - **Build Command**: `cd frontend && npm install && npm run build` (or leave default if configured via `vercel.json`)
+   - **Output Directory**: `frontend/dist` (or `dist` if root is `frontend`)
+3. Optional Environment Variables:
+   - `VITE_BACKEND_URL`: URL of your deployed backend (e.g. `https://ic-verify-ai.onrender.com`). If omitted, the app will run with full built-in interactive simulation mode.
+4. Click **Deploy**.
+
+---
+
+### Option 2: Render.com (Recommended for Full-Stack Docker Backend)
 [Render](https://render.com) automatically reads [`render.yaml`](./render.yaml) or your `Dockerfile` directly from your GitHub repository.
 
 1. Go to [dashboard.render.com](https://dashboard.render.com/) and click **New +** → **Web Service**.

@@ -7,7 +7,7 @@
     "dev": "node start_dev.js",
     "dev:backend": "python backend/main.py",
     "dev:frontend": "npm --prefix frontend run dev",
-    "build": "npm --prefix frontend run build"
+    "build": "npm --prefix frontend install && npm --prefix frontend run build"
   },
   "keywords": ["aoi", "ic-verification", "computer-vision", "fastapi", "react"],
   "author": "Rohith B",
