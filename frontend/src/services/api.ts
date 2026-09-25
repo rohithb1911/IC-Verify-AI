@@ -109,11 +109,15 @@ const generateMockScan = (filename: string, fallbackImageUrl?: string): Inspecti
   let text = "NE555P TI 2315 BATCH_A7";
   
   // Real sample optical stage mapping
-  let rawUrl = fallbackImageUrl || `/static/uploads/${filename}`;
-  let procUrl = fallbackImageUrl || `/static/uploads/${filename}`;
-  let cropUrl = fallbackImageUrl || `/static/uploads/${filename}`;
-  let bboxUrl = fallbackImageUrl || `/static/uploads/${filename}`;
-  let damageUrl = fallbackImageUrl || `/static/uploads/${filename}`;
+  // Ensure valid fallback URL (only accept blob: or data: URIs, avoiding dead /static/ links)
+  const validFallback = fallbackImageUrl && (fallbackImageUrl.startsWith('blob:') || fallbackImageUrl.startsWith('data:')) ? fallbackImageUrl : undefined;
+
+  let rawUrl = validFallback || '/samples/ic_pristine_ne555p_genuine.jpg';
+  let procUrl = '/samples/proc_ic_pristine_ne555p_genuine.png';
+  let cropUrl = '/samples/crop_ic_pristine_ne555p_genuine.png';
+  let bboxUrl = '/samples/bbox_ic_pristine_ne555p_genuine.png';
+  let defectUrl = '/samples/defect_ic_pristine_ne555p_genuine.png';
+  let damageUrl = '/samples/damage_ic_pristine_ne555p_genuine.png';
 
   if (nameLower.includes("stm32")) {
     part = "STM32F103C8T6";
@@ -124,40 +128,56 @@ const generateMockScan = (filename: string, fallbackImageUrl?: string): Inspecti
       : "STM32F103C8T6 ST 2412 MALAYSIA";
     
     if (isCracked) {
-      rawUrl = fallbackImageUrl || '/samples/ic_cracked_stm32f103_defect.jpg';
+      rawUrl = validFallback || '/samples/ic_cracked_stm32f103_defect.jpg';
       procUrl = '/samples/proc_ic_cracked_stm32f103_defect.png';
       cropUrl = '/samples/crop_ic_cracked_stm32f103_defect.png';
       bboxUrl = '/samples/bbox_ic_cracked_stm32f103_defect.png';
+      defectUrl = '/samples/defect_ic_cracked_stm32f103_defect.png';
       damageUrl = '/samples/damage_ic_cracked_stm32f103_defect.png';
     } else {
-      rawUrl = fallbackImageUrl || '/samples/ic_pristine_stm32f103_genuine.jpg';
+      rawUrl = validFallback || '/samples/ic_pristine_stm32f103_genuine.jpg';
       procUrl = '/samples/proc_ic_pristine_stm32f103_genuine.png';
       cropUrl = '/samples/crop_ic_pristine_stm32f103_genuine.png';
       bboxUrl = '/samples/bbox_ic_pristine_stm32f103_genuine.png';
+      defectUrl = '/samples/defect_ic_pristine_stm32f103_genuine.png';
       damageUrl = '/samples/damage_ic_pristine_stm32f103_genuine.png';
     }
   } else if (nameLower.includes("atmega")) {
     part = "ATMEGA328P-PU";
     mfg = "Microchip Technology";
     text = "ATMEGA328P-PU ATMEL 2341 B99";
+    rawUrl = validFallback || '/samples/ic_stm32_clean_genuine_test.png';
+    procUrl = '/samples/proc_ic_stm32_clean_genuine_test.png';
+    cropUrl = '/samples/crop_ic_stm32_clean_genuine_test.png';
+    bboxUrl = '/samples/bbox_ic_stm32_clean_genuine_test.png';
+    defectUrl = '/samples/defect_ic_stm32_clean_genuine_test.png';
+    damageUrl = '/samples/damage_ic_stm32_clean_genuine_test.png';
   } else if (nameLower.includes("esp32")) {
     part = "ESP32-WROOM-32";
     mfg = "Espressif Systems";
     text = "ESP32-WROOM-32 ESPRESSIF 2311 B23";
+    rawUrl = validFallback || '/samples/ic_counterfeit_damaged_crack_test.png';
+    procUrl = '/samples/proc_ic_counterfeit_damaged_crack_test.png';
+    cropUrl = '/samples/crop_ic_counterfeit_damaged_crack_test.png';
+    bboxUrl = '/samples/bbox_ic_counterfeit_damaged_crack_test.png';
+    defectUrl = '/samples/defect_ic_counterfeit_damaged_crack_test.png';
+    damageUrl = '/samples/damage_ic_counterfeit_damaged_crack_test.png';
   } else if (nameLower.includes("lm317")) {
     part = "LM317T";
     mfg = "ON Semiconductor";
     text = "LM317T ON 2145";
-    rawUrl = fallbackImageUrl || '/samples/ic_remarked_lm317t_counterfeit_damaged.jpg';
+    rawUrl = validFallback || '/samples/ic_remarked_lm317t_counterfeit_damaged.jpg';
     procUrl = '/samples/proc_ic_remarked_lm317t_counterfeit_damaged.png';
     cropUrl = '/samples/crop_ic_remarked_lm317t_counterfeit_damaged.png';
     bboxUrl = '/samples/bbox_ic_remarked_lm317t_counterfeit_damaged.png';
+    defectUrl = '/samples/defect_ic_remarked_lm317t_counterfeit_damaged.png';
     damageUrl = '/samples/damage_ic_remarked_lm317t_counterfeit_damaged.png';
   } else if (nameLower.includes("ne555")) {
-    rawUrl = fallbackImageUrl || '/samples/ic_pristine_ne555p_genuine.jpg';
+    rawUrl = validFallback || '/samples/ic_pristine_ne555p_genuine.jpg';
     procUrl = '/samples/proc_ic_pristine_ne555p_genuine.png';
     cropUrl = '/samples/crop_ic_pristine_ne555p_genuine.png';
     bboxUrl = '/samples/bbox_ic_pristine_ne555p_genuine.png';
+    defectUrl = '/samples/defect_ic_pristine_ne555p_genuine.png';
     damageUrl = '/samples/damage_ic_pristine_ne555p_genuine.png';
   }
 
@@ -211,7 +231,7 @@ const generateMockScan = (filename: string, fallbackImageUrl?: string): Inspecti
     processed_image_url: procUrl,
     ic_crop_url: cropUrl,
     bbox_url: bboxUrl,
-    defect_url: damageUrl,
+    defect_url: defectUrl,
     damage_image_url: damageUrl,
     detected_text: text,
     manufacturer: mfg,

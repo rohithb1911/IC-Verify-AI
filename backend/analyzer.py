@@ -16,7 +16,24 @@ else:
 UPLOAD_DIR = os.path.join(STATIC_DIR, "uploads")
 PROCESSED_DIR = os.path.join(STATIC_DIR, "processed")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(PROCESSED_DIR, exist_ok=True)
+import base64
+
+def cv2_to_data_uri(cv_img, max_w=480):
+    """Encodes OpenCV image into a base64 Data URI for instant frontend display without disk 404s."""
+    try:
+        if cv_img is None:
+            return ""
+        h, w = cv_img.shape[:2]
+        if w > max_w:
+            scale = max_w / float(w)
+            cv_img = cv2.resize(cv_img, (max_w, int(h * scale)), interpolation=cv2.INTER_AREA)
+        success, buffer = cv2.imencode('.png', cv_img, [cv2.IMWRITE_PNG_COMPRESSION, 6])
+        if success:
+            b64_str = base64.b64encode(buffer).decode('utf-8')
+            return f"data:image/png;base64,{b64_str}"
+    except Exception:
+        pass
+    return ""
 
 def parse_ic_markings(text):
     """
@@ -619,13 +636,18 @@ def process_ic_image(file_path, filename, expected_part=None):
             "description": str(d["description"])
         })
 
+    proc_uri = cv2_to_data_uri(thresh)
+    crop_uri = cv2_to_data_uri(ic_crop)
+    bbox_uri = cv2_to_data_uri(bbox_img)
+    damage_uri = cv2_to_data_uri(damage_res["annotated_damage_img"])
+
     return {
         "raw_image_url": f"/static/uploads/{filename}",
-        "processed_image_url": f"/static/{processed_rel_path}",
-        "ic_crop_url": f"/static/{ic_crop_rel_path}",
-        "bbox_url": f"/static/{bbox_rel_path}",
-        "defect_url": f"/static/{defect_rel_path}",
-        "damage_image_url": f"/static/{damage_rel_path}",
+        "processed_image_url": proc_uri or f"/static/{processed_rel_path}",
+        "ic_crop_url": crop_uri or f"/static/{ic_crop_rel_path}",
+        "bbox_url": bbox_uri or f"/static/{bbox_rel_path}",
+        "defect_url": damage_uri or f"/static/{defect_rel_path}",
+        "damage_image_url": damage_uri or f"/static/{damage_rel_path}",
         "detected_text": ocr_text,
         "manufacturer": manufacturer,
         "part_number": part_number,

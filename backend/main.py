@@ -33,7 +33,9 @@ if is_vercel:
 else:
     STATIC_DIR = os.path.join(BASE_DIR, "static")
 UPLOAD_DIR = os.path.join(STATIC_DIR, "uploads")
+PROCESSED_DIR = os.path.join(STATIC_DIR, "processed")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(PROCESSED_DIR, exist_ok=True)
 
 # Mount static files for access to processed/uploaded images
 if os.path.exists(STATIC_DIR):

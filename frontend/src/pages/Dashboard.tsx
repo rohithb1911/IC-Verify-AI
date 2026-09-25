@@ -748,20 +748,46 @@ export default function Dashboard() {
                   </div>
                   <div className="grid grid-cols-5 gap-2">
                     {[
-                      { title: '1. Raw', img: scanResult.raw_image_url || previewUrl },
-                      { title: '2. Filtered', img: scanResult.processed_image_url || previewUrl },
-                      { title: '3. BBox', img: scanResult.bbox_url || previewUrl },
-                      { title: '4. Marking', img: scanResult.defect_url || previewUrl },
-                      { title: '5. Damage', img: scanResult.damage_image_url || previewUrl },
+                      { 
+                        title: '1. Raw', 
+                        img: (scanResult.raw_image_url && !scanResult.raw_image_url.startsWith('/static/')) ? scanResult.raw_image_url : (previewUrl || '/samples/ic_cracked_stm32f103_defect.jpg'),
+                        fallback: previewUrl || '/samples/ic_cracked_stm32f103_defect.jpg'
+                      },
+                      { 
+                        title: '2. Filtered', 
+                        img: scanResult.processed_image_url || '/samples/proc_ic_cracked_stm32f103_defect.png',
+                        fallback: '/samples/proc_ic_cracked_stm32f103_defect.png'
+                      },
+                      { 
+                        title: '3. BBox', 
+                        img: scanResult.bbox_url || '/samples/bbox_ic_cracked_stm32f103_defect.png',
+                        fallback: '/samples/bbox_ic_cracked_stm32f103_defect.png'
+                      },
+                      { 
+                        title: '4. Marking', 
+                        img: scanResult.defect_url || '/samples/defect_ic_cracked_stm32f103_defect.png',
+                        fallback: '/samples/defect_ic_cracked_stm32f103_defect.png'
+                      },
+                      { 
+                        title: '5. Damage', 
+                        img: scanResult.damage_image_url || '/samples/damage_ic_cracked_stm32f103_defect.png',
+                        fallback: '/samples/damage_ic_cracked_stm32f103_defect.png'
+                      },
                     ].map((st, i) => (
                       <div key={i} className="text-center space-y-1">
                         <div className="text-[9px] font-bold text-slate-500 truncate">{st.title}</div>
                         <div className="aspect-square bg-slate-100 border border-slate-200 rounded overflow-hidden flex items-center justify-center">
-                          {st.img ? (
-                            <img src={st.img} alt={st.title} className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-[8px] text-slate-400">N/A</span>
-                          )}
+                          <img 
+                            src={st.img || st.fallback} 
+                            alt={st.title} 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (st.fallback && target.src !== st.fallback) {
+                                target.src = st.fallback;
+                              }
+                            }}
+                          />
                         </div>
                       </div>
                     ))}

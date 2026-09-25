@@ -443,25 +443,45 @@ export default function History() {
                   <div className="space-y-1">
                     <span className="text-[10px] text-slate-500 dark:text-gray-500 font-semibold">1. Original Capture</span>
                     <div className="aspect-video bg-slate-100 dark:bg-black border border-slate-200 dark:border-cardBorder rounded-xl overflow-hidden shadow-inner">
-                      <img src={selectedInspection.raw_image_url} alt="Raw" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedInspection.raw_image_url || '/samples/ic_pristine_stm32f103_genuine.jpg'} 
+                        alt="Raw" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.src = '/samples/ic_pristine_stm32f103_genuine.jpg'; }}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] text-slate-500 dark:text-gray-500 font-semibold">2. Denoised & Threshold</span>
                     <div className="aspect-video bg-slate-100 dark:bg-black border border-slate-200 dark:border-cardBorder rounded-xl overflow-hidden shadow-inner">
-                      <img src={selectedInspection.processed_image_url} alt="Processed" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedInspection.processed_image_url || '/samples/proc_ic_pristine_stm32f103_genuine.png'} 
+                        alt="Processed" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.src = '/samples/proc_ic_pristine_stm32f103_genuine.png'; }}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] text-slate-500 dark:text-gray-500 font-semibold">3. Cropped IC</span>
                     <div className="aspect-video bg-slate-100 dark:bg-black border border-slate-200 dark:border-cardBorder rounded-xl overflow-hidden shadow-inner">
-                      <img src={selectedInspection.ic_crop_url} alt="Crop" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedInspection.ic_crop_url || '/samples/crop_ic_pristine_stm32f103_genuine.png'} 
+                        alt="Crop" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.src = '/samples/crop_ic_pristine_stm32f103_genuine.png'; }}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1">
                     <span className="text-[10px] text-slate-500 dark:text-gray-500 font-semibold">4. Marking Boxes</span>
                     <div className="aspect-video bg-slate-100 dark:bg-black border border-slate-200 dark:border-cardBorder rounded-xl overflow-hidden shadow-inner">
-                      <img src={selectedInspection.bbox_url} alt="BBox" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedInspection.bbox_url || '/samples/bbox_ic_pristine_stm32f103_genuine.png'} 
+                        alt="BBox" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.src = '/samples/bbox_ic_pristine_stm32f103_genuine.png'; }}
+                      />
                     </div>
                   </div>
                   <div className="space-y-1 col-span-2">
@@ -469,7 +489,12 @@ export default function History() {
                       <Activity className="w-3 h-3" /> 5. Damage & Defect Overlay Map
                     </span>
                     <div className="aspect-video bg-slate-100 dark:bg-black border border-rose-300 dark:border-red-500/40 rounded-xl overflow-hidden ring-1 ring-rose-300/40 shadow-inner">
-                      <img src={selectedInspection.damage_image_url || selectedInspection.defect_url} alt="Damage Map" className="w-full h-full object-cover" />
+                      <img 
+                        src={selectedInspection.damage_image_url || selectedInspection.defect_url || '/samples/damage_ic_cracked_stm32f103_defect.png'} 
+                        alt="Damage Map" 
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.src = '/samples/damage_ic_cracked_stm32f103_defect.png'; }}
+                      />
                     </div>
                   </div>
                 </div>
