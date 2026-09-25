@@ -7,7 +7,12 @@ import datetime
 import database
 
 # Ensure static, uploads, and processed directories exist
-STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+import tempfile
+is_vercel = os.environ.get("VERCEL") == "1" or os.environ.get("NOW_REGION") is not None
+if is_vercel:
+    STATIC_DIR = os.path.join(tempfile.gettempdir(), "static")
+else:
+    STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 UPLOAD_DIR = os.path.join(STATIC_DIR, "uploads")
 PROCESSED_DIR = os.path.join(STATIC_DIR, "processed")
 os.makedirs(UPLOAD_DIR, exist_ok=True)

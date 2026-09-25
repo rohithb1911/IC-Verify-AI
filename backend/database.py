@@ -3,10 +3,30 @@ import sqlite3
 import datetime
 import json
 
-DB_FILE = os.path.join(os.path.dirname(__file__), "ic_verify.db")
+import tempfile
+import shutil
+
+is_vercel = os.environ.get("VERCEL") == "1" or os.environ.get("NOW_REGION") is not None
+if is_vercel:
+    tmp_db = os.path.join(tempfile.gettempdir(), "ic_verify.db")
+    orig_db = os.path.join(os.path.dirname(__file__), "ic_verify.db")
+    if not os.path.exists(tmp_db) and os.path.exists(orig_db):
+        try:
+            shutil.copyfile(orig_db, tmp_db)
+        except Exception:
+            pass
+    DB_FILE = tmp_db
+else:
+    DB_FILE = os.path.join(os.path.dirname(__file__), "ic_verify.db")
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_FILE)
+    try:
+        conn = sqlite3.connect(DB_FILE)
+    except sqlite3.OperationalError:
+        tmp_db = os.path.join(tempfile.gettempdir(), "ic_verify.db")
+        if not os.path.exists(tmp_db) and os.path.exists(os.path.join(os.path.dirname(__file__), "ic_verify.db")):
+            shutil.copyfile(os.path.join(os.path.dirname(__file__), "ic_verify.db"), tmp_db)
+        conn = sqlite3.connect(tmp_db)
     conn.row_factory = sqlite3.Row
     return conn
 

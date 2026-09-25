@@ -25,13 +25,19 @@ app.add_middleware(
 )
 
 # Setup directories
+import tempfile
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_DIR = os.path.join(BASE_DIR, "static")
+is_vercel = os.environ.get("VERCEL") == "1" or os.environ.get("NOW_REGION") is not None
+if is_vercel:
+    STATIC_DIR = os.path.join(tempfile.gettempdir(), "static")
+else:
+    STATIC_DIR = os.path.join(BASE_DIR, "static")
 UPLOAD_DIR = os.path.join(STATIC_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Mount static files for access to processed/uploaded images
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Database Initialization & Auto-Migration
 database.init_db()
